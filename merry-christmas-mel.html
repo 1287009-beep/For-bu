@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Merry Christmas Mel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+      color: #5a0022;
+      font-family: 'Georgia', serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .snowflake {
+      position: absolute;
+      color: white;
+      font-size: 20px;
+      top: -20px;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
+
+    /* Book Page Styling */
+    .book-page {
+      background: white;
+      width: 90%;
+      max-width: 500px;
+      min-height: 60vh;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+    .book-page h2 {
+      font-size: 2.2rem;
+      color: #d1004f;
+      margin-bottom: 20px;
+    }
+    .book-page p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: #5a0022;
+      margin: 15px 0;
+    }
+    .book-page .btn {
+      background: #d1004f;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      margin-top: 25px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .book-page .btn:hover {
+      background: #a0003a;
+      transform: scale(1.05);
+    }
+    .book-page img {
+      width: 100px;
+      margin: 15px 0;
+      opacity: 0.9;
+    }
+
+    /* Music Button */
+    #musicBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ff6b9d;
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 100;
+    }
+    #musicBtn:hover {
+      background: #ff3a7d;
+    }
+
+    /* Hidden YouTube player */
+    #musicPlayer {
+      position: absolute;
+      width: 0;
+      height: 0;
+      opacity: 0;
+    }
+
+    /* Fade animation for text */
+    .fade {
+      opacity: 0;
+      animation: fadeIn 1s forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Music Button -->
+  <button id="musicBtn" onclick="playMusic()">🎵</button>
+
+  <!-- Hidden YouTube Player -->
+  <div id="musicPlayer">
+    <iframe id="ytPlayer" width="0" height="0" frameborder="0" allow="autoplay"></iframe>
+  </div>
+
+  <!-- Book Content -->
+  <div class="book-page" id="currentPage">
+    <h2>🎄 Merry Christmas, Mel!</h2>
+    <p>Click anywhere to start your story...</p>
+    <img src="https://cdn.pixabay.com/photo/2023/12/11/15/57/christmas-8442440_1280.png" alt="Gift Box">
+  </div>
+
+  <script>
+    // Falling Snow
+    function createSnow() {
+      const snowflakes = ['❄', '❅', '❆'];
+      setInterval(() => {
+        const snow = document.createElement('div');
+        snow.innerHTML = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+        snow.className = 'snowflake';
+        snow.style.left = Math.random() * 100 + 'vw';
+        snow.style.opacity = Math.random() * 0.8 + 0.2;
+        snow.style.fontSize = (Math.random() * 20 + 15) + 'px';
+        snow.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        document.body.appendChild(snow);
+        setTimeout(() => snow.remove(), 10000);
+      }, 400);
+    }
+
+    // Story Pages
+    const pages = [
+      {
+        title: "You're magical, Mel 💖",
+        text: "Every snowflake falls... just like my thoughts of you.",
+        img: "https://cdn.pixabay.com/photo/2023/12/11/15/57/christmas-8442440_1280.png"
+      },
+      {
+        title: "This year...",
+        text: "You made someone believe in kindness again.",
+        img: "https://cdn.pixabay.com/photo/2023/12/11/15/57/christmas-8442440_1280.png"
+      },
+      {
+        title: "So this Christmas...",
+        text: "My only wish is to see you smile.",
+        img: "https://cdn.pixabay.com/photo/2023/12/11/15/57/christmas-8442440_1280.png"
+      },
+      {
+        title: "Feliz Navidad, Mel 🎁",
+        text: "May your days be sparkly, warm, and full of joy—today and always.",
+        img: "https://cdn.pixabay.com/photo/2023/12/11/15/57/christmas-8442440_1280.png"
+      },
+      {
+        title: "The end... or just the beginning? ❤️",
+        text: "Click to restart the magic!",
+        img: "https://cdn.pixabay.com/photo/2023/12/11/15/57/christmas-8442440_1280.png"
+      }
+    ];
+
+    let pageIndex = 0;
+    const currentPage = document.getElementById('currentPage');
+
+    function showPage(index) {
+      const page = pages[index];
+      currentPage.innerHTML = `
+        <h2 class="fade">${page.title}</h2>
+        <img src="${page.img}" alt="Illustration" class="fade">
+        <p class="fade">${page.text}</p>
+        <p class="fade" style="font-size:0.9rem; margin-top:20px; color:#d1004f;">(Click anywhere to continue)</p>
+      `;
+    }
+
+    // Click anywhere to advance
+    document.body.addEventListener('click', () => {
+      if (pageIndex === 0) {
+        // First click starts story
+        showPage(0);
+        pageIndex = 1;
+      } else if (pageIndex <= pages.length) {
+        showPage(pageIndex);
+        pageIndex = (pageIndex + 1) % pages.length;
+      }
+    });
+
+    // Music
+    let musicPlayed = false;
+    function playMusic() {
+      if (!musicPlayed) {
+        const player = document.getElementById('ytPlayer');
+        player.src = "https://www.youtube.com/embed/4H9naH8EVQ8?autoplay=1&loop=1&playlist=4H9naH8EVQ8&controls=0";
+        musicPlayed = true;
+        document.getElementById('musicBtn').textContent = '🔊';
+      }
+    }
+
+    // Start snow
+    window.onload = createSnow;
+  </script>
+</body>
+</html>
